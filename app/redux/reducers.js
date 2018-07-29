@@ -1,24 +1,47 @@
 import {combineReducers} from 'redux';
-import {CHANGE_NUMBER} from './actions';
+import {ADD_TODO, TOGGLE_TODO, CLEAR_TODO} from './actions';
 
-const INITIAL_STATE = { number: 999 };
+const INITIAL_STATE = { todos: [] };
 
-function numberChanger(state = INITIAL_STATE, action) {
-
-    if (action.type === CHANGE_NUMBER) {
+function todoReducer(state = INITIAL_STATE, action) {
+    if (action.type === ADD_TODO) {
         return {
-            ...state,
-            number: action.number
+            todos: [
+                ...state.todos,
+                {
+                    text: action.text,
+                    isDone: false
+                }
+            ]
+        };
+    } else if (action.type === TOGGLE_TODO) {
+        let modifiedTodos = [];
+        state.todos.map((todo, index) => {
+            if (index === action.index) {
+                let toggledTodo = {
+                    ...todo,
+                    isDone: !todo.isDone
+                };
+                modifiedTodos.push(toggledTodo);
+            } else {
+                modifiedTodos.push(todo);
+            }
+        });
+
+        return {
+            todos: modifiedTodos
+        };
+    } else if (action.type === CLEAR_TODO) {
+        return {
+            todos: []
         };
     }
 
-    return {
-        ...state
-    };
+    return state;
 }
 
 const allReducers = combineReducers({
-    numberChanger
+    todoReducer
 });
 
 export default allReducers;
